@@ -1,13 +1,6 @@
-import gym
-from gym.utils import seeding
-from gym import spaces
-# from gym import utils
-# import os, subprocess, time, signal
 import numpy as np
 
-# from gym_maze.envs.maze_view_2d import MazeView2D
-
-class gridWorldEnv(gym.Env):
+class gridWorldEnv():
 
     def __init__(self, grid_row = 4, grid_col = 4, start_pos = (0,0), list_of_hole_pos = None, target = None):
 
@@ -25,52 +18,89 @@ class gridWorldEnv(gym.Env):
         else:
             raise Exception("Start position is in a hole!!")
 
-        self.traps = list_of_hole_pos
-
-        self._seed()
+        # self._seed()
         self._configure_environment(grid_row, grid_col, list_of_hole_pos, start_pos, target)
 
-        self.obs_ = self.starting_state_
+        self.prev_state_ = self.state_ = self.starting_state_
+
+        self.episode_done_ = False
+
         # self._create_observation_space() # convert the grid world to 1D for easy creation of Q-table
 
+    ''' LIST OF CLASS VARIABLES: (self.)
+        - state_            (int)           :current state (0 to size(grid world))
+        - grid_             (np.array)      :grid_world with 1 for safe places, 0 for unsafe (traps)
+        - obs_space_    
+        - traps_
+        - starting_state_
+        - target_state_
+        - actions_
+        - episode_done_
+        - status_
+        - reward_
+
+        TODO...
+
+    '''
 
 
     def _configure_environment(self,row,col,list_of_hole_pos, start_pos, target_pos):
 
-        def _set_traps(grid, list_of_coordinates):
+        def _set_traps_and_target(grid, list_of_coordinates, target):
 
-            row_list = []
-            col_list = []
-            for i,j in list_of_coordinates:
-                row_list.append(i)
-                col_list.append(j)
+            grid = self._set_traps_in_grid(grid, list_of_coordinates)
 
-            grid[np.array(row_list),np.array(col_list)] = 0
+            grid = self._set_target_in_grid(grid, target)
 
             return grid
 
 
         grid = np.ones((row,col)) 
 
-        self.grid_ = _set_traps(grid,list_of_hole_pos)
+        self.grid_ = _set_traps_and_target(grid,list_of_hole_pos, target_pos)
 
-        self.obs_space_ = self.grid_.flatten()
+        self.obs_space_ = self.grid_.flatten() # observation space. The state space will be the indices of the obs_space, i.e, [i for i in range(len(self.obs_space_))]
 
-        self.starting_state_ = self._convert_coords_to_obs(start_pos)
+        self._set_starting_state(start_pos)
 
-        self.target_state_ = self._convert_coords_to_obs(target_pos)
+        self._set_target_state(target_pos)
 
+        self.traps_ = [self._convert_coords_to_state(i) for i in list_of_hole_pos]
+
+        self.safe_states_ = [i for i in range(len(self.obs_space_)) if self.obs_space_[i] == 1]
         # print self.obs_space_
-
+        
+        self.actions_ = {
+        'left'  :   0,
+        'up'    :   1,
+        'right' :   2,
+        'down'  :   3
+        }
 
         # self._env = spaces.Box(np.array([0,0]),np.array([4,4]))
 
+    def _set_traps_in_grid(self, grid, list_of_coordinates):
+        
+        row_list = []
+        col_list = []
+        for i,j in list_of_coordinates:
+            row_list.append(i)
+            col_list.append(j)
+
+        grid[np.array(row_list),np.array(col_list)] = 0
+
+        return grid
+
+    def _set_target_in_grid(self, grid, target):
+
+        grid[target] = 5
+        return grid
+
+
     def _seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
+        raise Exception("Not Implemented")
 
-        return [seed]
-
-    def _step(self, action):
+    def step(self, action = None):
         """
 
         Parameters
@@ -98,99 +128,157 @@ class gridWorldEnv(gym.Env):
                  probabilities behind the environment's last state change).
                  However, official evaluations of your agent are not allowed to
                  use this for learning.
-        """
-        self._take_action(action)
-        self.obs_ = self._get_observation()
 
-        # reward = self._get_reward()
-        # ob = self.env.getState()
-        episode_over = ob == self._target
+        """
+
+        self._sanity_check()
+
+        self.episode_done_ = False
+        # ------- update self.state_ by taking some action
+        if action is None:
+            self.take_random_action()
+        else:
+            self._take_action(action)
+
+        self.status_ = self._get_state_status()
+
+        self.reward_ = self._compute_reward()
+
+        step_details = {
+        'prev state': self.prev_state_,
+        'action'    : action,
+        'status'    : self.status_
+        }
+
+        self.prev_state_ = self.state_
+
+        return self.state_, self.reward_, self.episode_done_, step_details
+
         # return ob, reward, episode_over, {}
 
-    def _convert_coords_to_obs(self, coords): #(row,col)
-
+    def _convert_coords_to_state(self, coords): #(row,col)
         return coords[0]*self.grid_.shape[0] + coords[1]
 
     def _set_current_state(self,coords): #(row,col)
-        '''
-        set current state to the desired row and col, in the 1D obs_space_
+        self.state_ = self._convert_coords_to_state(coords)
 
-        coords list: (desired_row, desired_col)
-        '''
+    def _set_starting_state(self, coords):
+        self.starting_state_ = self._convert_coords_to_state(coords)
 
-        self.obs_ = self._convert_coords_to_obs(coords)
+    def _set_target_state(self, coords):
+        self.target_state_ = self._convert_coords_to_state(coords)
 
-    def _get_current_obs(self):
+    def _get_current_state(self):
+        return self.state_
 
-        return self.obs_
+    def _get_current_observation(self):
+        return self._get_observation_at(self.state_)
+
+    def _get_observation_at(self,state):
+        return self.obs_space_[state]
 
     def _get_grid_world(self):
-
         return self.grid_
 
     def _get_observation_space(self):
-
         return self.obs_space_
 
-    def _get_coords_from_state(self, state):
+    def _convert_state_to_coords(self, state):
 
         row = int(state/self.grid_.shape[1])
         col = state - (row * self.grid_.shape[1])
 
         return (row,col)
 
-    def _reset(self):
+    def reset(self, randomise = False):
+
+        if randomise:
+            self.starting_state_ = np.random.randint(0,len(self.safe_states_))
+
+        self.state_ = self.starting_state_
+        return self.state_
+
+    def render(self, mode='human', close=False):
         pass
 
-    def _render(self, mode='human', close=False):
-        pass
+    def take_random_action(self):
+
+        action = np.random.randint(0,len(self.actions_))
+        self._take_action(action)
+
+    def _sanity_check(self):
+
+        if self.state_ not in range(self.obs_space_.size): # sanity check
+            raise Exception("current observation not in observation space!")
 
     def _take_action(self, action):
 
-        if self.obs_ not in range(self.obs_space_.size): # sanity check
-            raise Exception("current observation not in observation space!")
-        
-        if action == 0: # go left one step
-            # if self.state_col > 0:
-            #     self.state_col -=1
-            if self.obs_%self.grid_.shape[1] != 0: # obs_ not in the leftmost column of the grid
-                self.obs_ -= 1
+        if isinstance(action, basestring):
+            if action in self.actions_:
+                action = self.actions_[action]
             else:
-                print "leftmost extreme"
+                raise Exception("Unrecognized Action Requested!")
+
+        # print "taking action", action, [key for key, value in self.actions_.iteritems() if value == action][0]        
+
+        if action == 0: # go left one step
+            if self.state_%self.grid_.shape[1] != 0: # state_ not in the leftmost column of the grid
+                self.state_ -= 1
+            # else:
+            #     print "leftmost extreme"
 
         elif action == 1: # go up
-            # if self.state_row > 0:
-            #     self.state_row -=1
-            if self.obs_ not in range(self.grid_.shape[1]): # obs_ not in the first row of the grid
-                self.obs_ -= self.grid_.shape[1]
-            else:
-                print "topmost extreme"
+            if self.state_ not in range(self.grid_.shape[1]): # state_ not in the first row of the grid
+                self.state_ -= self.grid_.shape[1]
+            # else:
+            #     print "topmost extreme"
 
         elif action == 2: # go right
-            # if self.state_col < self.grid_.shape[1]-1:
-            #     self.state_col +=1
-            if (self.obs_+1)%self.grid_.shape[1] != 0: # obs_ not in the rightmost col of grid_
-                self.obs_ += 1
-            else:
-                print "rightmost extreme"
+            if (self.state_+1)%self.grid_.shape[1] != 0: # state_ not in the rightmost col of grid_
+                self.state_ += 1
+            # else:
+            #     print "rightmost extreme"
 
         elif action == 3: # go down
-            # if self.state_row < self.grid_.shape[0]-1:
-            #     self.state_row +=1
-            if self.obs_ > (self.obs_space_.size - 1 - self.grid_.shape[1]): # obs not in the last row of the grid
-                self.obs_ += self.grid_.shape[1]
-            else:
-                print "bottommost extreme"
+            if self.state_ < (self.obs_space_.size - self.grid_.shape[1]): # obs not in the last row of the grid
+                self.state_ += self.grid_.shape[1]
+            # else:
+            #     print "bottommost extreme"
 
-    def _get_reward(self):
-        """ Reward is given for XY. """
-        # if self.status == FOOBAR:
-        #     return 1
-        # elif self.status == ABC:
-        #     return self.somestate ** 2
-        # else:
-        #     return 0
+        self._sanity_check()
 
+    def _get_state_status(self,state = None):
+
+        if state == None:
+            state = self.state_
+
+        if state == self.target_state_ and self._get_observation_at(state) == 5:
+            self.episode_done_ = True
+            return "target"
+
+        elif self._get_observation_at(state) == 1:
+            return "safe"
+
+        elif self._get_observation_at(state) == 0:
+            self.episode_done_ = True               # --- This can be commented out to get more exploration
+            return "trap"
+        else:
+            raise Exception("ERROR: Unknown State Status")
+
+
+    def _compute_reward(self, status = None):
+
+        if status == None:
+            status = self.status_
+
+        if status == "trap":
+            return -100
+
+        if status == "target":
+            return 1000
+
+        if status == "safe":
+            return 0
 
 
 # class envSpaces(spaces.Discrete):
@@ -204,11 +292,24 @@ if __name__ == '__main__':
     
     grid = gridWorldEnv()
 
-    print grid._get_grid_world()
+    # print grid._get_grid_world()
 
     print grid._get_observation_space()
 
-    print grid._get_current_obs(), grid._get_coords_from_state(grid._get_current_obs())
+    print grid.safe_states_
+
+    # print grid._get_current_state(), grid._convert_state_to_coords(grid._get_current_state())
+
+    # grid._set_current_state((0,2))
+
+    # print grid._get_current_state(), grid._convert_state_to_coords(grid._get_current_state())
+    # grid._take_random_action()
+    # grid._take_action('right')
+
+
+
+    # grid._take_action('left')
+    # print type(grid.actions_)
 
 
 
