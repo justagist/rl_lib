@@ -42,7 +42,7 @@ class QLearnerDiscrete:
                 j+=1
 
                 #Choose an action greedily (with noise) by picking from Q table
-                a = np.argmax(self.Q[s,:] + np.random.randn(1,self.env.action_space.n)*(1./(i+1)))
+                a = np.argmax(self.Q[s,:] + np.random.randn(1,self.env.action_space.n)*(1./(i+1))) 
 
                 #Get new state and reward from environment
                 s1,r,d,_ = self.env.step(a) # d is the boolean that states whether the state has reached the target state
