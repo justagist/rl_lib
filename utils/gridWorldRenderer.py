@@ -1,7 +1,14 @@
+''' Pygame render class for visualising GridWorld Environment (gridWorldEnv.py) 
+    ---- for testing reinforcement learning algorihtms    
+
+    @author: JustaGist (saifksidhik@gmail.com)
+    @file: gridWorldRenderer.py
+    @package: reinforcement_learn
+'''
+
 from pygame.locals import *
 import pygame, sys
 import numpy as np
-# from gridWorldEnv import gridWorldEnv
 
 
 green = (40,255,30)
@@ -28,6 +35,7 @@ colours = {
 TILESIZE = 50
 
 clock = pygame.time.Clock()
+
 # tilemap (format - list of lists) =
 #         [
 #         [TRAP,SAFE,SAFE,SAFE, START],
@@ -36,6 +44,7 @@ clock = pygame.time.Clock()
 #         [START, TRAP,SAFE,SAFE, TRAP],
 #         [SAFE,SAFE,SAFE,SAFE,TRAP]
 #         ]
+
 class gridWorldRenderer:
 
     def __init__(self, grid):
@@ -99,11 +108,11 @@ class gridWorldRenderer:
         while run:
 
             for tile in path_coords:
-                # events = pygame.event.get()
-                # for event in events:
-                #     if event.type == pygame.QUIT:
-                #         run = False
-                #         pygame.quit()
+                events = pygame.event.get()
+                for event in events:
+                    if event.type == pygame.QUIT:
+                        run = False
+                        pygame.quit()
 
                 self.DISPLAYSURF.fill((0,0,0));
                 for row in range(self.map_height_):
@@ -151,26 +160,6 @@ class gridWorldRenderer:
 
     def close(self):
         pygame.quit()
-
-
-
-
-class Player:
-    x = 10
-    y = 10
-    speed = 1
- 
-    def moveRight(self):
-        self.x = self.x + self.speed
- 
-    def moveLeft(self):
-        self.x = self.x - self.speed
- 
-    def moveUp(self):
-        self.y = self.y - self.speed
- 
-    def moveDown(self):
-        self.y = self.y + self.speed
 
 
 if __name__ == '__main__':

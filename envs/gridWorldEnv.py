@@ -1,5 +1,12 @@
+''' GridWorld Environment Class (based on OpenAI Gym environments) for testing reinforcement learning algorihtms    
+
+    @author: JustaGist (saifksidhik@gmail.com)
+    @file: gridWorldEnv.py
+    @package: reinforcement_learn
+'''
+
 import numpy as np
-from gridWorldRenderer import gridWorldRenderer
+from utils.gridWorldRenderer import gridWorldRenderer
 
 # ----- VALUES IN GRID:
 TRAP = 0
@@ -359,17 +366,22 @@ class gridWorldEnv():
 
         def find_valid_optimum_transition(from_state, action_ratings):
 
-            best_action = action_ratings.argmax()
-            new_state = self._transition(from_state, best_action)
+            try:
 
-            action_validity = self._get_state_status(new_state)
+                best_action = action_ratings.argmax()
+                new_state = self._transition(from_state, best_action)
 
-            if action_validity == "safe" or action_validity == "target":
-                return new_state
+                action_validity = self._get_state_status(new_state)
 
-            else:
-                action_ratings = np.array([action_ratings[i] for i in range(len(action_ratings)) if i != best_action])
-                return find_valid_optimum_transition(from_state, action_ratings)
+                if action_validity == "safe" or action_validity == "target":
+                    return new_state
+
+                else:
+                    action_ratings = np.array([action_ratings[i] for i in range(len(action_ratings)) if i != best_action])
+                    return find_valid_optimum_transition(from_state, action_ratings)
+            except ValueError():
+                print "Valid path could not be found"
+                sys.exit()
 
 
         optimal_path = []
@@ -379,14 +391,19 @@ class gridWorldEnv():
         idx = self.starting_state_
 
         while idx != self.target_state_:
-            print idx
+            print self._convert_state_to_coords(idx),
             optimal_path.append(idx)
 
             action_values_at_state = Qtable[idx]
+            
             new_state = find_valid_optimum_transition(idx, action_values_at_state)
-            # best_action = actions_at_state.argmax()
 
             idx = new_state
+            
+            '''
+            best_action = action_values_at_state.argmax()
+            idx = self._transition(idx, best_action)
+            '''
 
             if len(optimal_path) > len(self.state_space_): # Optimal path could not be found
                 return None
@@ -398,30 +415,6 @@ class gridWorldEnv():
         return optimal_path
 
 
-
-'''
-        if action == 0: # go left one step
-            if self.state_%self.grid_.shape[1] != 0: # state_ not in the leftmost column of the grid
-                self.state_ -= 1
-            # else:
-            #     print "leftmost extreme"
-
-        elif action == 1: # go up
-            if self.state_ not in range(self.grid_.shape[1]): # state_ not in the first row of the grid
-                self.state_ -= self.grid_.shape[1]
-            # else:
-            #     print "topmost extreme"
-
-        elif action == 2: # go right
-            if (self.state_+1)%self.grid_.shape[1] != 0: # state_ not in the rightmost col of grid_
-                self.state_ += 1
-            # else:
-            #     print "rightmost extreme"
-
-        elif action == 3: # go down
-            if self.state_ < (self.obs_space_.size - self.grid_.shape[1]): # obs not in the last row of the grid
-                self.state_ += self.grid_.shape[1]
-'''
 ## ======================== ##
 #         TEST CODE          #
 ## ======================== ##
@@ -432,38 +425,3 @@ if __name__ == '__main__':
     print grid._get_grid_world()
 
     print grid._get_observation_space()
-
-    # print grid.safe_states_
-
-    # print grid._get_current_state(), grid._convert_state_to_coords(grid._get_current_state())
-
-    # grid._set_current_state((0,2))
-
-    # print grid._get_current_state(), grid._convert_state_to_coords(grid._get_current_state())
-    # grid._take_random_action()
-    # grid._take_action('right')
-
-
-
-    # grid._take_action('left')
-    # print type(grid.actions_)
-
-
-
-    # space = spaces.Discrete(5)
-    # print space
-    # # x = space.sample()
-    # print space.contains(4)
-
-    # view = MazeView2D(maze_name="OpenAI Gym - Maze (%d x %d)" % maze_size,
-    #                                     maze_size=5, screen_size=(640, 640))
-    # maze_size = (10,10)
-
-    # low = np.zeros(len(maze_size), dtype=int)
-    # high =  np.array(maze_size, dtype=int) - np.ones(len(maze_size), dtype=int)
-    # observation_space = spaces.Box(low, high)
-    # # x = space.sample()
-    # # print space.contains(x)
-    # print observation_space
-    # print high 
-    # print low

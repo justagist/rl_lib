@@ -1,16 +1,18 @@
 ''' Simple implementation for solving the gridworld environment using Q-learning/Sarsa
     --- for testing different action policies and knowledge updation
+    
 
-    (Based on tutorial at medium.com)
+    @author: JustaGist (saifksidhik@gmail.com)
+    @file: discrete_q_learning
+    @package: reinforcement_learn
+
+    USAGE: 
 '''
     
 import sys
 import gym
 import numpy as np
-from gridWorldEnv import gridWorldEnv
-
-
-
+from envs.gridWorldEnv import gridWorldEnv
 
 class QLearnerDiscrete:
 
@@ -80,7 +82,19 @@ class QLearnerDiscrete:
 
 if __name__ == '__main__':
 
-    env = gridWorldEnv(6,8,render = True)
+    show = True
+    row = col = 4
+
+    if len(sys.argv) == 2:
+        show = bool(int(sys.argv[1]))
+
+    if len(sys.argv) > 2:
+        row = int(sys.argv[1])
+        col = int(sys.argv[2])
+        if len(sys.argv) > 2:
+            show = bool(sys.argv[3])
+
+    env = gridWorldEnv(row, col, render = show)
     learner = QLearnerDiscrete(env)
 
 
