@@ -52,8 +52,8 @@ class QLearnerDiscrete:
                 s1,r,d,_ = self.env.step(a) # d is the boolean that states whether the state has reached the target state
 
                 # ----- Update Q-Table with new knowledge
-                # self.Q[s,a] = self.Q[s,a] + self.lr*(r + self.y*np.max(self.Q[s1,:]) - self.Q[s,a]) # ----- Q-learning
-                self.Q[s,a] = self.Q[s,a] + self.lr*(r + self.y*self.Q[s1,a] - self.Q[s,a]) # ----- Sarsa
+                self.Q[s,a] = self.Q[s,a] + self.lr*(r + self.y*np.max(self.Q[s1,:]) - self.Q[s,a]) # ----- Q-learning
+                # self.Q[s,a] = self.Q[s,a] + self.lr*(r + self.y*self.Q[s1,a] - self.Q[s,a]) # ----- Sarsa
 
                 rAll += r
 
@@ -65,24 +65,30 @@ class QLearnerDiscrete:
 
             self.rList.append(rAll)
 
-
-        print "Optimum QTable obtained.\nScore over time: " +  str(sum(self.rList)/self.num_episodes)
-
-
-    def reset_q_table(self):
-
-        self.Q = np.zeros([self.env.observation_space.n,self.env.action_space.n])
-
-    def get_q_table(self):
+        env.close()
 
         return self.Q
+
+    def reset_q_table(self):
+        self.Q = np.zeros([self.env.observation_space.n,self.env.action_space.n])
+
+
+    def find_best_actions_at_each_state(self):
+        return self.Q.argmax(1)
+        
 
 
 if __name__ == '__main__':
 
-    learner = QLearnerDiscrete(env = gridWorldEnv())
+    env = gridWorldEnv(6,8,render = True)
+    learner = QLearnerDiscrete(env)
 
-    learner.find_best_q_table()
 
-    print "Final Q-Table Values"
-    print learner.get_q_table()
+    qtable = learner.find_best_q_table()
+
+    print "Final Q-Table Values: "
+    print qtable
+
+    # act_path =  learner.find_best_actions_at_each_state()
+
+    env.visualise_optimal_path(qtable)
