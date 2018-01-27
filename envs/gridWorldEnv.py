@@ -378,6 +378,8 @@ class gridWorldEnv():
 
                 else:
                     action_ratings = np.array([action_ratings[i] for i in range(len(action_ratings)) if i != best_action])
+                    if len(action_ratings) == 0:
+                        return best_action
                     return find_valid_optimum_transition(from_state, action_ratings)
             except ValueError():
                 print "Valid path could not be found"
