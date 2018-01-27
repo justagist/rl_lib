@@ -3,16 +3,18 @@
     
 
     @author: JustaGist (saifksidhik@gmail.com)
-    @file: discrete_q_learning
-    @package: reinforcement_learn
+    @file: discrete_q_learning v1.1
+    @package: rl_lib
 
-    USAGE: 
+    USAGE: python discrete_q_learning.py <row> <col> <visualize?>
+            (or) 
+           python discrete_q_learning.py <visualize?>
+                    where visualize = 1 or 0
 '''
     
 import sys
-import gym
 import numpy as np
-from envs.gridWorldEnv import gridWorldEnv
+from rl_lib.envs.gridWorldEnv import gridWorldEnv
 
 class QLearnerDiscrete:
 
@@ -67,7 +69,7 @@ class QLearnerDiscrete:
 
             self.rList.append(rAll)
 
-        env.close()
+        self.env.close()
 
         return self.Q
 

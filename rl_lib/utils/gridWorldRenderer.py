@@ -3,7 +3,7 @@
 
     @author: JustaGist (saifksidhik@gmail.com)
     @file: gridWorldRenderer.py
-    @package: reinforcement_learn
+    @package: rl_lib v1.1
 '''
 
 from pygame.locals import *

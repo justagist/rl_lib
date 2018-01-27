@@ -2,11 +2,11 @@
 
     @author: JustaGist (saifksidhik@gmail.com)
     @file: gridWorldEnv.py
-    @package: reinforcement_learn
+    @package: rl_lib v1.1
 '''
 
 import numpy as np
-from utils.gridWorldRenderer import gridWorldRenderer
+from rl_lib.utils.gridWorldRenderer import gridWorldRenderer
 
 # ----- VALUES IN GRID:
 TRAP = 0
