@@ -11,7 +11,7 @@
 
 import sys
 import numpy as np
-from rl_lib.envs.gridWorldEnv import gridWorldEnv
+from rl_lib.envs.gridWorldEnv import GridWorldEnv
 from rl_lib.discreteQLearning import QLearnerDiscrete
 
 
@@ -34,13 +34,13 @@ def obtain_traps():
 if __name__ == '__main__':
 
     show = True
-    row = col = 5
+    row = col = 6
     start_pos = (0,0)
     target = None
     list_of_traps = None
     render = True
 
-    print "*********** Reinforcement Learning Demo ***********\n\n"
+    print "\n\n*********** Reinforcement Learning Demo ***********\n\n"
 
     print "Grid World Details:\nRows: %d\tCols: %d"%(row,col)
     print "Start Position:", start_pos,"\tGoal Position:",(0,0)
@@ -49,21 +49,21 @@ if __name__ == '__main__':
     use_demo = raw_input("Use Default values?(Y/n)\n")
     if use_demo != 'y' and use_demo != 'Y' and use_demo != '':
 
-        r = raw_input("No of rows in World? (5)\n")
+        r = raw_input("No of rows in World? (6)\n")
         if r != '':
             row = int(r)
 
-        c = raw_input("No of columnss in World? (5)\n")
+        c = raw_input("No of columnss in World? (6)\n")
         if c != '':
             col = int(c)
 
-        start1 = raw_input("Starting Position (Row coordinate)?\n")
+        start1 = raw_input("Starting Position (Row coordinate) (0)?\n")
         if start1 != '':
             start1 = int(r)
         else:
             start1 = 0
 
-        start2 = raw_input("Starting Position (Column coordinate)?\n")
+        start2 = raw_input("Starting Position (Column coordinate) (0)?\n")
         if start2 != '':
             start2 = int(r)
         else:
@@ -71,11 +71,11 @@ if __name__ == '__main__':
 
         start_pos = (start1,start2)
 
-        target1 = raw_input("Goal Position (Row coordinate)?\n")
+        target1 = raw_input("Goal Position (Row coordinate) (5)?\n")
         if target1 != '':
             target1 = int(r)
 
-        target2 = raw_input("Goal Position (Column coordinate)?\n")
+        target2 = raw_input("Goal Position (Column coordinate)? (5)\n")
         if target2 != '':
             target2 = int(r)
 
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     print "Traps: Random \tVisualise Learning: True"
 
 
-    env = gridWorldEnv(grid_row = row, grid_col = col, start_pos = start_pos, list_of_hole_pos = list_of_traps, target = target, render = render)
+    env = GridWorldEnv(grid_row = row, grid_col = col, start_pos = start_pos, list_of_hole_pos = list_of_traps, target = target, render = render)
     learner = QLearnerDiscrete(env)
 
 
@@ -104,7 +104,5 @@ if __name__ == '__main__':
 
     print "Final Q-Table Values: "
     print qtable
-
-    # act_path =  learner.find_best_actions_at_each_state()
 
     env.visualise_optimal_path(qtable)

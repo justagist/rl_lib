@@ -45,7 +45,7 @@ clock = pygame.time.Clock()
 #         [SAFE,SAFE,SAFE,SAFE,TRAP]
 #         ]
 
-class gridWorldRenderer:
+class GridWorldRenderer:
 
     def __init__(self, grid):
 

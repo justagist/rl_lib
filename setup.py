@@ -22,7 +22,7 @@ setup(
     # packages=['rl_lib','envs','utils','alg_demos'],
     # packages=['rl_lib/envs', 'rl_lib/utils', 'rl_lib/alg_demos'],
     packages=find_packages(),
-    scripts=['rl_lib/commands/test-q-learn'],
+    scripts=['rl_lib/commands/qlearn-interactive'],
     # package_dir = {'envs':'rl_lib/envs', 'utils':'rl_lib/envs', 'alg_demos':'rl_lib/alg_demos'},
     install_requires=[
           'pygame', 'numpy'

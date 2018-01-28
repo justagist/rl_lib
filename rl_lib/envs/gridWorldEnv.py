@@ -6,7 +6,7 @@
 '''
 
 import numpy as np
-from rl_lib.utils.gridWorldRenderer import gridWorldRenderer
+from rl_lib.utils.gridWorldRenderer import GridWorldRenderer
 
 # ----- VALUES IN GRID:
 TRAP = 0
@@ -20,7 +20,7 @@ GOAL_REWARD = 100
 SAFE_REWARD = 1
 OUT_OF_BOUNDS_REWARD = -100
 
-class gridWorldEnv():
+class GridWorldEnv():
 
     ''' LIST OF CLASS VARIABLES: (self.)
     - state_            (int)           :current state (0 to size(grid world))
@@ -60,14 +60,11 @@ class gridWorldEnv():
         self._configure_environment(grid_row, grid_col, list_of_hole_pos, start_pos, target)
 
         self.prev_state_ = self.state_ = self.starting_state_
-        self.variable_start_state_ = False # ----- will be set to true if the reset() function is called with random=True
 
         self.render_ = render
 
         if self.render_:
-            self.visualizer_ = gridWorldRenderer(self.grid_)
-
-        print "this ", self.starting_state_
+            self.visualizer_ = GridWorldRenderer(self.grid_)
 
         self.episode_done_ = False
 
@@ -241,12 +238,15 @@ class gridWorldEnv():
         return (row,col)
 
     def reset(self, randomise = False):
-
+        '''
+        Resets the current state of the agent. 
+        If randomise is off, the agent is taken back to its designated start state. 
+        If on, a random state is chosen from the safe_states_
+        '''
         if randomise:
-            self.variable_start_state_ = True
-            self.starting_state_ = np.random.randint(0,len(self.safe_states_))
-
-        self.state_ = self.starting_state_
+            self.state_ = self.safe_states_[np.random.randint(0,len(self.safe_states_))]
+        else:
+            self.state_ = self.starting_state_
         return self.state_
 
     def take_random_action(self):
@@ -351,7 +351,7 @@ class gridWorldEnv():
         optimal_path = self._get_optimal_path(Qtable)
 
         if optimal_path is not None:
-            self.visualizer_ = gridWorldRenderer(self.grid_)
+            self.visualizer_ = GridWorldRenderer(self.grid_)
             self.visualizer_.execute_path_loop(optimal_path)
         else:
             print "Best path could not be found!"
@@ -388,9 +388,9 @@ class gridWorldEnv():
 
         optimal_path = []
 
-        if self.variable_start_state_:
-            self.starting_state_ = 0
         idx = self.starting_state_
+
+        print 'idx', idx
 
         while idx != self.target_state_:
             print self._convert_state_to_coords(idx),
