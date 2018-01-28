@@ -7,4 +7,4 @@ Run:
 
     sudo python setup.py install # for global installation 
     # OR
-    python setup.by build # for local
+    python setup.py build # for local
