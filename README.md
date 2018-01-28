@@ -1,1 +1,10 @@
-Code implementations of RL techniques. Based on https://medium.com/emergent-future/simple-reinforcement-learning-with-tensorflow-part-0-q-learning-with-tables-and-neural-networks-d195264329d0
+A repo for learning and testing RL algorithms.
+
+
+### Installation: 
+
+Run:
+
+    sudo python setup.py install # for global installation 
+    # OR
+    python setup.by build # for local
