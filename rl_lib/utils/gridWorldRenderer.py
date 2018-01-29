@@ -84,7 +84,7 @@ class GridWorldRenderer:
 
         # ----- defining rectangles around the labels for placing them in pygame window
         self.start_tile_rect = ((start_tile_coord[1][0])*TILESIZE, (start_tile_coord[0][0]+0.25)*TILESIZE, TILESIZE, TILESIZE)
-        self.goal_tile_rect = ((goal_tile_coord[1][0])*TILESIZE, (goal_tile_coord[0][0]+0.25)*TILESIZE, TILESIZE, TILESIZE)
+        self.goal_tile_rect = ((goal_tile_coord[1][0]+0.05)*TILESIZE, (goal_tile_coord[0][0]+0.3)*TILESIZE, TILESIZE, TILESIZE)
 
     def _cleanup(self):
         pygame.quit()

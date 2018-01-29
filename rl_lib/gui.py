@@ -43,8 +43,10 @@ def _destroy_New_Toplevel_1():
     w = None
 
 def _close_gui():
+    global root
     print "closing GUI"
     root.destroy()
+    root = None
 
 
 class New_Toplevel_1:
@@ -365,20 +367,21 @@ if __name__ == '__main__':
     learner_params_ = QLearnerParameters()
     _start_gui()
 
-    # env = GridWorldEnv(grid_row = learner_params_.row_out, grid_col = learner_params_.col_out, 
-    #                    start_pos = (learner_params_.start_row_out,learner_params_.start_col_out), 
-    #                    target = (learner_params_.goal_row_out,learner_params_.goal_col_out), 
-    #                    render = learner_params_.check_vis_out)
+    if root is None:
+        env = GridWorldEnv(grid_row = learner_params_.row_out, grid_col = learner_params_.col_out, 
+                           start_pos = (learner_params_.start_row_out,learner_params_.start_col_out), 
+                           target = (learner_params_.goal_row_out,learner_params_.goal_col_out), 
+                           render = learner_params_.check_vis_out)
 
-    # learner = QLearnerDiscrete(env, lr = learner_params_.lr_out, y = learner_params_.df_out, eps = learner_params_.eps_out, action_policy = self.act_pol)
+        learner = QLearnerDiscrete(env, lr = learner_params_.lr_out, y = learner_params_.df_out, eps = learner_params_.eps_out, action_policy = learner_params_.act_pol)
 
 
-    # qtable = learner.find_best_q_table()
+        qtable = learner.find_best_q_table()
 
-    # print "Final Q-Table Values: "
-    # print qtable
+        print "Final Q-Table Values: "
+        print qtable
 
-    # # act_path =  learner.find_best_actions_at_each_state()
+        # act_path =  learner.find_best_actions_at_each_state()
 
-    # env.visualise_optimal_path(qtable)
+        env.visualise_optimal_path(qtable)
 
