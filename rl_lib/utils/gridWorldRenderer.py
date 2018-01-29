@@ -48,15 +48,20 @@ clock = pygame.time.Clock()
 
 class GridWorldRenderer:
 
-    def __init__(self, grid):
+    def __init__(self, grid = None, rows = None, cols = None, start = None, goal = None, caption = 'Grid World - Reinforcement Learning'):
 
-        self._create_grid_world(grid)
+        if grid is not None: # initialise using grid. The other arguments are not required
+            self._create_grid_world_from_matrix(grid)
+        elif rows is not None and cols is not None and start is not None and goal is not None:
+            self._create_grid_world_from_dimensions(rows,cols,start,goal)
+        else:
+            raise Exception("Grid cannot be created. Not enough information available.")
 
-        self._setup_pygame_window()
+        self._setup_pygame_window(caption)
 
         self.running_ = True
 
-    def _setup_pygame_window(self):
+    def _setup_pygame_window(self, caption):
 
         pygame.init()
 
@@ -69,10 +74,10 @@ class GridWorldRenderer:
         # self.start_rect = pygame.get_rect(start_text)
 
         self.DISPLAYSURF = pygame.display.set_mode((self.map_width_*TILESIZE,self.map_height_*TILESIZE))
-        pygame.display.set_caption('Grid World - Reinforcement Learning')
+        pygame.display.set_caption(caption)
         
 
-    def _create_grid_world(self, grid):
+    def _create_grid_world_from_matrix(self, grid):
 
         self.tilemap_ = grid.tolist()
         self.map_width_ = grid.shape[1]
@@ -86,35 +91,83 @@ class GridWorldRenderer:
         self.start_tile_rect = ((start_tile_coord[1][0])*TILESIZE, (start_tile_coord[0][0]+0.25)*TILESIZE, TILESIZE, TILESIZE)
         self.goal_tile_rect = ((goal_tile_coord[1][0]+0.1)*TILESIZE, (goal_tile_coord[0][0]+0.3)*TILESIZE, TILESIZE, TILESIZE)
 
+    def _create_grid_world_from_dimensions(self, row, col, start, goal):
+
+        self.tilemap_ = [[SAFE for i in range(col)] for j in range(row)]
+        self.tilemap_[start[0]][start[1]] = START
+        self.tilemap_[goal[0]][goal[1]] = TARGET
+        self.map_width_ = col
+        self.map_height_ = row
+
+        self.start_tile_rect = ((start[1])*TILESIZE, (start[0]+0.25)*TILESIZE, TILESIZE, TILESIZE)
+        self.goal_tile_rect = ((goal[1]+0.1)*TILESIZE, (goal[0]+0.3)*TILESIZE, TILESIZE, TILESIZE)
+
     def _cleanup(self):
         pygame.quit()
 
+    def blit_text(self,surface, text, pos, font, color=pygame.Color('black')): # for displaying multiline text in pygame
+        words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
+        space = font.size(' ')[0]  # The width of a space.
+        max_width, max_height = surface.get_size()
+        x, y = pos
+        for line in words:
+            for word in line:
+                word_surface = font.render(word, 0, color)
+                word_width, word_height = word_surface.get_size()
+                if x + word_width >= max_width:
+                    x = pos[0]  # Reset the x.
+                    y += word_height  # Start on new row.
+                surface.blit(word_surface, (x, y))
+                x += word_width + space
+            x = pos[0]  # Reset the x.
+            y += word_height  # Start on new row.
+
     def execute_collect_mouse_response(self):
 
+        font=pygame.font.SysFont('liberationserif', 15)
+        font.set_bold(True)
+        instruction = 'Close this window when done.\nPress Enter to begin.'
+
+        user_agreed = False
+        while not user_agreed:
+            self.DISPLAYSURF.fill((0,0,0))
+
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        user_agreed = True
+
+            self.blit_text(self.DISPLAYSURF, instruction, (self.map_width_*TILESIZE/4,self.map_height_*TILESIZE/4),font,white)
+            pygame.display.update()
+
+
         while True:
-            # mouse_x = pygame.mouse.get_pos()[0]
-            # mouse_y = pygame.mouse.get_pos()[1]
+            mouse_x = pygame.mouse.get_pos()[0]
+            mouse_y = pygame.mouse.get_pos()[1]
 
             # print mouse_x, mouse_y
 
-            # for event in pygame.event.get():
-            #     if event.type == QUIT:
-            #         pygame.quit()
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
 
 
-            self.DISPLAYSURF.fill((0,0,0));
+            self.DISPLAYSURF.fill((0,0,0))
             for row in range(self.map_height_):
                 # print            
                 for col in range(self.map_width_):
                     color = colours[self.tilemap_[row][col]];
-                    # if mouse_x >= (col * TILESIZE) and mouse_x <= (col* TILESIZE) + TILESIZE:
-                    #     if mouse_y >= (row * TILESIZE) and mouse_y <= (row* TILESIZE) + TILESIZE:
-                    #         print (str(row) + " " + str(col))
-                    #         color = yellow;                                                                                                            
+                    if mouse_x >= (col * TILESIZE) and mouse_x <= (col* TILESIZE) + TILESIZE:
+                        if mouse_y >= (row * TILESIZE) and mouse_y <= (row* TILESIZE) + TILESIZE:
+                            # print (str(row) + " " + str(col))
+                            color = yellow;                                                                                                            
 
                     pygame.draw.rect(self.DISPLAYSURF, color, (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE))
 
-
+            self.DISPLAYSURF.blit(self.start_text, self.start_tile_rect)
+            self.DISPLAYSURF.blit(self.goal_text, self.goal_tile_rect)
             pygame.display.update()
 
 

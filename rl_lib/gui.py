@@ -18,6 +18,7 @@ except ImportError:
 
 from rl_lib.envs.gridWorldEnv import GridWorldEnv
 from rl_lib.discreteQLearning import QLearnerDiscrete
+from rl_lib.utils.gridWorldRenderer import GridWorldRenderer
 
 
 def _start_gui():
@@ -269,10 +270,12 @@ class New_Toplevel_1:
 Click button below to place obstacles manually.''')
         self.Message1.configure(width=363)
 
-        self.Button1 = Button(top)
-        self.Button1.place(relx=0.08, rely=0.82, height=26, width=100)
-        self.Button1.configure(activebackground="#f4bcb2")
-        self.Button1.configure(text='''Obstacles''')
+        self.ObstaclesButton = Button(top)
+        self.ObstaclesButton.place(relx=0.08, rely=0.82, height=26, width=100)
+        self.ObstaclesButton.configure(activebackground="#f4bcb2")
+        self.ObstaclesButton.configure(text='''Obstacles''')
+        self.ObstaclesButton.bind('<Button-1>',lambda e:learner_params_.collect_obstacle_list_from_user())
+        self.ObstaclesButton.bind('<Key-space>',lambda e:learner_params_.collect_obstacle_list_from_user())
 
 
 class QLearnerParameters:
@@ -313,24 +316,15 @@ class QLearnerParameters:
         self.action_policy.set('epsilon (random)')
         self.update_policy.set('QL')
 
-        global VchkAVI
-        VchkAVI = StringVar()
 
-        global VchkMKV
-        VchkMKV = StringVar()
+    def collect_obstacle_list_from_user(self):
 
-        global VchkMV4
-        VchkMV4 = StringVar()
+        self.grid_gui = GridWorldRenderer(rows = self.row_num.get(), cols = self.col_num.get(), 
+                                          start = (self.start_row.get() - 1, self.start_col.get() - 1),
+                                          goal = (self.goal_row.get()- 1, self.goal_col.get()- 1),
+                                          caption = 'Grid World - Set Obstacles')
 
-        global VchkMP3
-        VchkMP3 = StringVar()
-
-        global VchkOGG
-        VchkOGG = StringVar()
-        global exts, FileList
-        exts = []
-        FilePath=StringVar()
-        FileList=[]
+        self.grid_gui.execute_collect_mouse_response()
 
 
     def buttonSTARTpressed(self):
