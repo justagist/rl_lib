@@ -240,7 +240,7 @@ class New_Toplevel_1:
         self.visualise_check.configure(variable=learner_params_.check_visualise)
 
         self.action_policy = ttk.Combobox(self.Labelframe6)
-        self.action_policy.place(relx=0.67, rely=0.25, relheight=0.12
+        self.action_policy.place(relx=0.67, rely=0.16, relheight=0.12
                 , relwidth=0.31)
         self.value_list = ['epsilon (random)','epsilon-greedy',]
         self.action_policy.configure(values=self.value_list)
@@ -249,9 +249,23 @@ class New_Toplevel_1:
         self.action_policy.configure(takefocus="")
 
         self.Label19 = Label(self.Labelframe6)
-        self.Label19.place(relx=0.47, rely=0.25, height=18, width=86)
+        self.Label19.place(relx=0.47, rely=0.16, height=18, width=86)
         self.Label19.configure(activebackground="#f9f9f9")
         self.Label19.configure(text='''Action Policy''')
+
+        self.update_policy = ttk.Combobox(self.Labelframe6)
+        self.update_policy.place(relx=0.67, rely=0.49, relheight=0.12
+                , relwidth=0.31)
+        self.value_list = ['QL','Sarsa',]
+        self.update_policy.configure(values=self.value_list)
+        self.update_policy.configure(textvariable=learner_params_.update_policy)
+        self.update_policy.configure(width=147)
+        self.update_policy.configure(takefocus="")
+
+        self.Label20 = Label(self.Labelframe6)
+        self.Label20.place(relx=0.47, rely=0.49, height=18, width=86)
+        self.Label20.configure(activebackground="#f9f9f9")
+        self.Label20.configure(text='''Update Policy''')
 
 
 class QLearnerParameters:
@@ -332,11 +346,11 @@ class QLearnerParameters:
         elif action_pol == 'epsilon-greedy':
             self.act_pol = 'epsilon_greedy'
 
-        # update_pol = self.update_policy.get()
-        # if update_pol == 'epsilon (random)':
-        #     self.val_update_pol = 'epsilon'
-        # elif update_pol == 'epsilon-greedy':
-        #     self.val_update_pol = 'epsilon_greedy'
+        update_pol = self.update_policy.get()
+        if update_pol == 'QL':
+            self.val_update_pol = 'q'
+        elif update_pol == 'Sarsa':
+            self.val_update_pol = 'sarsa'
 
         print self.row_out, self.col_out,self.start_row_out,self.start_col_out,self.goal_row_out,self.goal_col_out, self.check_vis_out, self.lr_out, self.df_out, self.eps_out, self.act_pol
         _close_gui()
