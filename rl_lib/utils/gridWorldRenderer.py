@@ -12,7 +12,7 @@ import numpy as np
 
 
 green = (40,255,30)
-brown = (40,60,90)
+blue = (40,60,90)
 red =  (155,20,30)
 yellow = (0,155,155)
 white = (255,255,255)
@@ -27,7 +27,7 @@ AGENT = 4
 colours = {
     TRAP: black,
     SAFE: white,
-    START: yellow,
+    START: blue,
     TARGET: green,
     AGENT: red
     }
@@ -36,6 +36,7 @@ TILESIZE = 50
 
 clock = pygame.time.Clock()
 
+# window.fill((255, 255, 255))
 # tilemap (format - list of lists) =
 #         [
 #         [TRAP,SAFE,SAFE,SAFE, START],
@@ -58,23 +59,37 @@ class GridWorldRenderer:
     def _setup_pygame_window(self):
 
         pygame.init()
-        self.DISPLAYSURF = pygame.display.set_mode((self.map_width_*TILESIZE,self.map_height_*TILESIZE))
 
+        # ----- labels
+        font=pygame.font.SysFont('liberationserif', 15)
+        font.set_bold(True)
+        self.start_text = font.render('START', True, black)
+        self.goal_text = font.render('GOAL', True, black)
+
+        # self.start_rect = pygame.get_rect(start_text)
+
+        self.DISPLAYSURF = pygame.display.set_mode((self.map_width_*TILESIZE,self.map_height_*TILESIZE))
         pygame.display.set_caption('Grid World - Reinforcement Learning')
         
 
     def _create_grid_world(self, grid):
 
-         self.tilemap_ = grid.tolist()
-         self.map_width_ = grid.shape[1]
-         self.map_height_ = grid.shape[0]
-         # print self.tilemap_
+        self.tilemap_ = grid.tolist()
+        self.map_width_ = grid.shape[1]
+        self.map_height_ = grid.shape[0]
+
+        # ----- finding coordinates of start grid and goal grid for labelling them
+        start_tile_coord = np.where(grid==START)
+        goal_tile_coord = np.where(grid==TARGET)
+
+        # ----- defining rectangles around the labels for placing them in pygame window
+        self.start_tile_rect = ((start_tile_coord[1][0])*TILESIZE, (start_tile_coord[0][0]+0.25)*TILESIZE, TILESIZE, TILESIZE)
+        self.goal_tile_rect = ((goal_tile_coord[1][0])*TILESIZE, (goal_tile_coord[0][0]+0.25)*TILESIZE, TILESIZE, TILESIZE)
 
     def _cleanup(self):
         pygame.quit()
 
     def execute(self):
-
 
         while True:
             # mouse_x = pygame.mouse.get_pos()[0]
@@ -85,6 +100,7 @@ class GridWorldRenderer:
             # for event in pygame.event.get():
             #     if event.type == QUIT:
             #         pygame.quit()
+
 
             self.DISPLAYSURF.fill((0,0,0));
             for row in range(self.map_height_):
@@ -122,16 +138,17 @@ class GridWorldRenderer:
                             color = colours[self.tilemap_[row][col]];
                         else:
                             color = colours[AGENT]
+                            # self.DISPLAYSURF.blit(self.start_text, self.start_text.get_rect())
                         # if mouse_x >= (col * TILESIZE) and mouse_x <= (col* TILESIZE) + TILESIZE:
                         #     if mouse_y >= (row * TILESIZE) and mouse_y <= (row* TILESIZE) + TILESIZE:
                         #         print (str(row) + " " + str(col))
                         #         color = yellow;                                                                                                            
-
                         pygame.draw.rect(self.DISPLAYSURF, color, (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE))
 
-
-                clock.tick(5)
+                self.DISPLAYSURF.blit(self.start_text, self.start_tile_rect)
+                self.DISPLAYSURF.blit(self.goal_text, self.goal_tile_rect)
                 pygame.display.update()
+                clock.tick(5)
 
         pygame.quit()
 
@@ -154,7 +171,8 @@ class GridWorldRenderer:
 
                 pygame.draw.rect(self.DISPLAYSURF, color, (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE))
 
-
+        self.DISPLAYSURF.blit(self.start_text, self.start_tile_rect)
+        self.DISPLAYSURF.blit(self.goal_text, self.goal_tile_rect)
         pygame.display.update()
 
 

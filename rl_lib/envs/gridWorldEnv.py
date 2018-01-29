@@ -390,10 +390,8 @@ class GridWorldEnv():
 
         idx = self.starting_state_
 
-        print 'idx', idx
-
         while idx != self.target_state_:
-            print self._convert_state_to_coords(idx),
+            # print self._convert_state_to_coords(idx),
             optimal_path.append(idx)
 
             action_values_at_state = Qtable[idx]
@@ -409,6 +407,8 @@ class GridWorldEnv():
 
             if len(optimal_path) > len(self.state_space_): # Optimal path could not be found
                 return None
+
+        print "Optimal Path:", [self._convert_state_to_coords(i) for i in optimal_path]
 
         optimal_path.append(self.target_state_)
         if grid_space:
