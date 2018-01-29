@@ -14,7 +14,7 @@ import numpy as np
 green = (40,255,30)
 blue = (40,60,90)
 red =  (155,20,30)
-yellow = (0,155,155)
+yellow = (255,255,0)
 white = (255,255,255)
 black = (0,0,0)
 
@@ -89,7 +89,7 @@ class GridWorldRenderer:
     def _cleanup(self):
         pygame.quit()
 
-    def execute(self):
+    def execute_collect_mouse_response(self):
 
         while True:
             # mouse_x = pygame.mouse.get_pos()[0]
@@ -151,7 +151,6 @@ class GridWorldRenderer:
                 clock.tick(5)
 
         pygame.quit()
-
 
 
     def render(self, agent_pos):

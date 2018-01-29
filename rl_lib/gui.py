@@ -239,6 +239,20 @@ class New_Toplevel_1:
         self.visualise_check.configure(text='''Visualise Learning Stage''')
         self.visualise_check.configure(variable=learner_params_.check_visualise)
 
+        self.action_policy = ttk.Combobox(self.Labelframe6)
+        self.action_policy.place(relx=0.67, rely=0.25, relheight=0.12
+                , relwidth=0.31)
+        self.value_list = ['epsilon (random)','epsilon-greedy',]
+        self.action_policy.configure(values=self.value_list)
+        self.action_policy.configure(textvariable=learner_params_.action_policy)
+        self.action_policy.configure(width=147)
+        self.action_policy.configure(takefocus="")
+
+        self.Label19 = Label(self.Labelframe6)
+        self.Label19.place(relx=0.47, rely=0.25, height=18, width=86)
+        self.Label19.configure(activebackground="#f9f9f9")
+        self.Label19.configure(text='''Action Policy''')
+
 
 class QLearnerParameters:
     def __init__(self):
@@ -258,6 +272,9 @@ class QLearnerParameters:
         self.df = DoubleVar()
         self.eps = IntVar()
 
+        self.action_policy = StringVar()
+        self.update_policy = StringVar()
+
     def set_gui_default_params(self):
 
         self.check_visualise.set("1")
@@ -271,6 +288,9 @@ class QLearnerParameters:
         self.lr.set(0.8)
         self.df.set(0.95)
         self.eps.set(2000)
+
+        self.action_policy.set('epsilon (random)')
+        self.update_policy.set('QL')
 
         global VchkAVI
         VchkAVI = StringVar()
@@ -306,7 +326,19 @@ class QLearnerParameters:
         self.df_out = self.df.get()
         self.eps_out = self.eps.get()
 
-        print self.row_out, self.col_out,self.start_row_out,self.start_col_out,self.goal_row_out,self.goal_col_out, self.check_vis_out, self.lr_out, self.df_out, self.eps_out
+        action_pol = self.action_policy.get()
+        if action_pol == 'epsilon (random)':
+            self.act_pol = 'epsilon'
+        elif action_pol == 'epsilon-greedy':
+            self.act_pol = 'epsilon_greedy'
+
+        # update_pol = self.update_policy.get()
+        # if update_pol == 'epsilon (random)':
+        #     self.val_update_pol = 'epsilon'
+        # elif update_pol == 'epsilon-greedy':
+        #     self.val_update_pol = 'epsilon_greedy'
+
+        print self.row_out, self.col_out,self.start_row_out,self.start_col_out,self.goal_row_out,self.goal_col_out, self.check_vis_out, self.lr_out, self.df_out, self.eps_out, self.act_pol
         _close_gui()
 
 
@@ -319,20 +351,20 @@ if __name__ == '__main__':
     learner_params_ = QLearnerParameters()
     _start_gui()
 
-    env = GridWorldEnv(grid_row = learner_params_.row_out, grid_col = learner_params_.col_out, 
-                       start_pos = (learner_params_.start_row_out,learner_params_.start_col_out), 
-                       target = (learner_params_.goal_row_out,learner_params_.goal_col_out), 
-                       render = learner_params_.check_vis_out)
+    # env = GridWorldEnv(grid_row = learner_params_.row_out, grid_col = learner_params_.col_out, 
+    #                    start_pos = (learner_params_.start_row_out,learner_params_.start_col_out), 
+    #                    target = (learner_params_.goal_row_out,learner_params_.goal_col_out), 
+    #                    render = learner_params_.check_vis_out)
 
-    learner = QLearnerDiscrete(env, lr = learner_params_.lr_out, y = learner_params_.df_out, eps = learner_params_.eps_out)
+    # learner = QLearnerDiscrete(env, lr = learner_params_.lr_out, y = learner_params_.df_out, eps = learner_params_.eps_out, action_policy = self.act_pol)
 
 
-    qtable = learner.find_best_q_table()
+    # qtable = learner.find_best_q_table()
 
-    print "Final Q-Table Values: "
-    print qtable
+    # print "Final Q-Table Values: "
+    # print qtable
 
-    # act_path =  learner.find_best_actions_at_each_state()
+    # # act_path =  learner.find_best_actions_at_each_state()
 
-    env.visualise_optimal_path(qtable)
+    # env.visualise_optimal_path(qtable)
 
