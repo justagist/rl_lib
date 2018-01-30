@@ -11,7 +11,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "rl_lib",
+    name = "rl_lib_simple",
     version = "1.1",
     author = "JustaGist",
     author_email = "saifksidhik@gmail.com",
@@ -22,7 +22,7 @@ setup(
     # packages=['rl_lib','envs','utils','alg_demos'],
     # packages=['rl_lib/envs', 'rl_lib/utils', 'rl_lib/alg_demos'],
     packages=find_packages(),
-    scripts=['rl_lib/commands/qlearn-interactive'],
+    scripts=['rl_lib_simple/commandscripts/qlearn-gridworld-gui'],
     # package_dir = {'envs':'rl_lib/envs', 'utils':'rl_lib/envs', 'alg_demos':'rl_lib/alg_demos'},
     install_requires=[
           'pygame', 'numpy'

@@ -1,18 +1,22 @@
-''' Simple implementation for solving the gridworld environment using Q-learning/Sarsa
-    --- for testing different action policies and knowledge updation
-    
+''' 
+
+Interactive version to test the implementation for solving the gridworld environment using Q-learning/Sarsa
+--- for testing different action policies and knowledge updation
+
 
     @author: JustaGist (saifksidhik@gmail.com)
-    @file: test_qlearn.py
-    @package: rl_lib v1.1
+    @file: test_qlearn_interactive.py
+    @package: rl_lib_simple v1.2
 
-    USAGE: python discrete_q_learning.py 
+USAGE: python test_qlearn_interactive.py 
+
 '''
+
 
 import sys
 import numpy as np
-from rl_lib.envs.gridWorldEnv import GridWorldEnv
-from rl_lib.discreteQLearning import QLearnerDiscrete
+from rl_lib_simple.envs.gridWorldEnv import GridWorldEnv
+from rl_lib_simple.discreteQLearning import QLearnerDiscrete
 
 
 def obtain_traps():

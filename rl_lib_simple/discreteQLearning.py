@@ -1,21 +1,24 @@
-''' A class for implementing Qlearning on discrete state and action spaces.
-    Simple implementation for solving the gridworld environment using Q-learning/Sarsa
-    --- for testing different action policies and knowledge updation
-    
+''' 
+
+A class for implementing Qlearning on discrete state and action spaces.
+Simple implementation for solving the gridworld environment using Q-learning/Sarsa
+--- for testing different action policies and knowledge updation
+
 
     @author: JustaGist (saifksidhik@gmail.com)
-    @file: discrete_q_learning v1.1
-    @package: rl_lib
+    @file: discreteQLearning 
+    @package: rl_lib_simple v1.2
 
-    USAGE: python discrete_q_learning.py <row> <col> <visualize?>
-            (or) 
-           python discrete_q_learning.py <visualize?>
-                    where visualize = 1 or 0
+USAGE: python discreteQLearning.py <row> <col> <visualize?>
+        (or) 
+       python discreteQLearning.py <visualize?>
+                where visualize = 1 or 0
+
 '''
     
 import sys
 import numpy as np
-from rl_lib.envs.gridWorldEnv import GridWorldEnv
+from rl_lib_simple.envs.gridWorldEnv import GridWorldEnv
 
 class QLearnerDiscrete:
 

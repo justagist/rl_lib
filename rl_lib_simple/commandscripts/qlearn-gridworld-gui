@@ -1,6 +1,19 @@
-# Created by modifying GUI generated py PAGE version 4.10
-# In conjunction with Tcl version 8.6
+'''
 
+Interactive implementation of solving the gridworld environment using Q-learning/Sarsa
+--- for testing and visualising different action policies and knowledge updation
+    
+
+    @author: JustaGist (saifksidhik@gmail.com)
+    @file: discrete_gridworld_gui.py
+    @package: rl_lib_simple v1.2
+
+USAGE: If rl_lib_simple package installed, run 'qlearn-gridworld-gui' from command line.
+
+GUI created by modifying the GUI generated py PAGE version 4.10
+In conjunction with Tcl version 8.6
+
+'''
 
 import sys
 
@@ -16,9 +29,9 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = 1
 
-from rl_lib.envs.gridWorldEnv import GridWorldEnv
-from rl_lib.discreteQLearning import QLearnerDiscrete
-from rl_lib.utils.gridWorldRenderer import GridWorldRenderer
+from rl_lib_simple.envs.gridWorldEnv import GridWorldEnv
+from rl_lib_simple.discreteQLearning import QLearnerDiscrete
+from rl_lib_simple.utils.gridWorldRenderer import GridWorldRenderer
 
 
 def _start_gui():
@@ -342,14 +355,18 @@ class QLearnerParameters:
 
             self.grid_gui.execute_collect_mouse_response()
 
-            print "reaching here"
             obst_records = self.grid_gui.get_mouseclick_record()
-            if obst_records is not None:
 
+            if obst_records is not None:
                 self.custom_obstacles = obst_records
+                print "setting custom obstacles"
+            else:
+                print "obstacles not changed"
 
         else:
             self.custom_obstacles = None
+            print "setting random obstacles"
+        print self.custom_obstacles
 
 
     def buttonSTARTpressed(self):
@@ -378,7 +395,8 @@ class QLearnerParameters:
         elif update_pol == 'Sarsa':
             self.val_update_pol = 'sarsa'
 
-        print self.row_out, self.col_out,self.start_row_out,self.start_col_out,self.goal_row_out,self.goal_col_out, self.check_vis_out, self.lr_out, self.df_out, self.eps_out, self.act_pol
+        print self.row_out, self.col_out,self.start_row_out,self.start_col_out,self.goal_row_out,self.goal_col_out, self.check_vis_out, self.lr_out, self.df_out, self.eps_out, self.act_pol, self.val_update_pol
+
         _close_gui()
 
 
@@ -395,6 +413,7 @@ if __name__ == '__main__':
         env = GridWorldEnv(grid_row = learner_params_.row_out, grid_col = learner_params_.col_out, 
                            start_pos = (learner_params_.start_row_out,learner_params_.start_col_out), 
                            target = (learner_params_.goal_row_out,learner_params_.goal_col_out), 
+                           list_of_hole_pos = learner_params_.custom_obstacles,
                            render = learner_params_.check_vis_out)
 
         learner = QLearnerDiscrete(env, lr = learner_params_.lr_out, y = learner_params_.df_out, eps = learner_params_.eps_out, action_policy = learner_params_.act_pol)

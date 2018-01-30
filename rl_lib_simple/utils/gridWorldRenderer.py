@@ -1,16 +1,24 @@
-''' Pygame render class for visualising GridWorld Environment (gridWorldEnv.py) 
-    ---- for testing reinforcement learning algorihtms    
+''' 
+
+Pygame render class for visualising GridWorld Environment (gridWorldEnv.py) 
+---- for testing reinforcement learning algorihtms    
+
 
     @author: JustaGist (saifksidhik@gmail.com)
     @file: gridWorldRenderer.py
-    @package: rl_lib v1.1
+    @package: rl_lib_simple v1.2
+
 '''
 
 from pygame.locals import *
 import pygame, sys
 import numpy as np
+import os 
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 
+# Global constants
 green = (40,255,30)
 blue = (0,0,200)
 red =  (155,20,30)

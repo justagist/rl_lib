@@ -1,12 +1,16 @@
-''' GridWorld Environment Class (based on OpenAI Gym environments) for testing reinforcement learning algorihtms    
+''' 
+
+GridWorld Environment Class for testing reinforcement learning algorihtms    
+
 
     @author: JustaGist (saifksidhik@gmail.com)
     @file: gridWorldEnv.py
-    @package: rl_lib v1.1
+    @package: rl_lib_simple v1.2
+
 '''
 
 import numpy as np
-from rl_lib.utils.gridWorldRenderer import GridWorldRenderer
+from rl_lib_simple.utils.gridWorldRenderer import GridWorldRenderer
 
 # ----- VALUES IN GRID:
 TRAP = 0
