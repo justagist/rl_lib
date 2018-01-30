@@ -5,6 +5,10 @@ A repo for learning and testing RL algorithms.
 
 Run:
 
-    sudo python setup.py install # for global installation 
-    # OR
-    python setup.py build # for local
+    sudo python setup.py install
+    
+### Test:
+
+Run from command line:
+
+    qlearn-gridworld-gui
