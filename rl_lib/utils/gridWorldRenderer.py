@@ -102,9 +102,6 @@ class GridWorldRenderer:
         self.start_tile_rect = ((start[1])*TILESIZE, (start[0]+0.25)*TILESIZE, TILESIZE, TILESIZE)
         self.goal_tile_rect = ((goal[1]+0.1)*TILESIZE, (goal[0]+0.3)*TILESIZE, TILESIZE, TILESIZE)
 
-    def _cleanup(self):
-        pygame.quit()
-
     def blit_text(self,surface, text, pos, font, color=pygame.Color('black')): # for displaying multiline text in pygame
         words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
         space = font.size(' ')[0]  # The width of a space.
@@ -124,17 +121,20 @@ class GridWorldRenderer:
 
     def execute_collect_mouse_response(self):
 
+        self.user_input_obstacles = []
+
         font=pygame.font.SysFont('liberationserif', 15)
         font.set_bold(True)
-        instruction = 'Close this window when done.\nPress Enter to begin.'
+        instruction = 'Press Enter or click to begin. \nClose this window or press Enter again when done'
 
         user_agreed = False
+
         while not user_agreed:
-            self.DISPLAYSURF.fill((0,0,0))
+            self.DISPLAYSURF.fill((20,20,20))
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    pygame.quit()
+                    self.close()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         user_agreed = True
@@ -149,9 +149,9 @@ class GridWorldRenderer:
 
             # print mouse_x, mouse_y
 
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
+            # for event in pygame.event.get():
+            #     if event.type == QUIT:
+            #         pygame.quit()
 
 
             self.DISPLAYSURF.fill((0,0,0))
@@ -162,7 +162,21 @@ class GridWorldRenderer:
                     if mouse_x >= (col * TILESIZE) and mouse_x <= (col* TILESIZE) + TILESIZE:
                         if mouse_y >= (row * TILESIZE) and mouse_y <= (row* TILESIZE) + TILESIZE:
                             # print (str(row) + " " + str(col))
-                            color = yellow;                                                                                                            
+                            color = yellow;    
+
+                            event = pygame.event.poll()
+                            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
+                                self.close()
+                                break
+                                break
+                                break
+                            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: # if clicked the grid becomes an obstacle, if clicked again, removes obstacle
+                                if self.tilemap_[row][col] == SAFE:
+                                    self.tilemap_[row][col] = TRAP
+                                    self.user_input_obstacles.append((row,col))
+                                elif self.tilemap_[row][col] == TRAP:
+                                    self.tilemap_[row][col] = SAFE
+                                    self.user_input_obstacles.remove((row,col))
 
                     pygame.draw.rect(self.DISPLAYSURF, color, (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE))
 
@@ -173,7 +187,13 @@ class GridWorldRenderer:
 
     def get_mouseclick_record(self):
 
-        return None
+        obstcls = self.user_input_obstacles
+        self.user_input_obstacles = []
+
+        if len(obstcls) > 0:
+            return obstcls
+        else:
+            return None
 
 
     def execute_path_loop(self, path_coords):

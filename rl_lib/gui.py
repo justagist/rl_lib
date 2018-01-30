@@ -273,9 +273,14 @@ Click button below to place obstacles manually.''')
         self.ObstaclesButton = Button(top)
         self.ObstaclesButton.place(relx=0.08, rely=0.82, height=26, width=100)
         self.ObstaclesButton.configure(activebackground="#f4bcb2")
-        self.ObstaclesButton.configure(text='''Obstacles''')
+        self.ObstaclesButton.configure(text='''Set Custom''')
+        self.ObstaclesButton.configure(command=self.change_button_text)
         self.ObstaclesButton.bind('<Button-1>',lambda e:learner_params_.collect_obstacle_list_from_user())
         self.ObstaclesButton.bind('<Key-space>',lambda e:learner_params_.collect_obstacle_list_from_user())
+
+    def change_button_text(self):
+
+        self.ObstaclesButton.configure(text='''Set Random''')
 
 
 class QLearnerParameters:
@@ -299,6 +304,9 @@ class QLearnerParameters:
         self.action_policy = StringVar()
         self.update_policy = StringVar()
 
+        self.custom_obstacles = None # initialising to None in case user input is not obtained (this is the default value in the qlearner code)
+
+
     def set_gui_default_params(self):
 
         self.check_visualise.set("1")
@@ -319,12 +327,19 @@ class QLearnerParameters:
 
     def collect_obstacle_list_from_user(self):
 
+
         self.grid_gui = GridWorldRenderer(rows = self.row_num.get(), cols = self.col_num.get(), 
                                           start = (self.start_row.get() - 1, self.start_col.get() - 1),
                                           goal = (self.goal_row.get()- 1, self.goal_col.get()- 1),
                                           caption = 'Grid World - Set Obstacles')
 
         self.grid_gui.execute_collect_mouse_response()
+
+        print "reaching here"
+        obst_records = self.grid_gui.get_mouseclick_record()
+        if obst_records is not None:
+
+            self.custom_obstacles = obst_records
 
 
     def buttonSTARTpressed(self):
