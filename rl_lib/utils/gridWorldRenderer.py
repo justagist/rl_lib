@@ -142,8 +142,8 @@ class GridWorldRenderer:
             self.blit_text(self.DISPLAYSURF, instruction, (self.map_width_*TILESIZE/4,self.map_height_*TILESIZE/4),font,white)
             pygame.display.update()
 
-
-        while True:
+        done_collecting = False
+        while not done_collecting:
             mouse_x = pygame.mouse.get_pos()[0]
             mouse_y = pygame.mouse.get_pos()[1]
 
@@ -166,10 +166,8 @@ class GridWorldRenderer:
 
                             event = pygame.event.poll()
                             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
-                                self.close()
-                                break
-                                break
-                                break
+                                done_collecting = True
+
                             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: # if clicked the grid becomes an obstacle, if clicked again, removes obstacle
                                 if self.tilemap_[row][col] == SAFE:
                                     self.tilemap_[row][col] = TRAP
@@ -183,6 +181,8 @@ class GridWorldRenderer:
             self.DISPLAYSURF.blit(self.start_text, self.start_tile_rect)
             self.DISPLAYSURF.blit(self.goal_text, self.goal_tile_rect)
             pygame.display.update()
+
+        self.close()
 
 
     def get_mouseclick_record(self):

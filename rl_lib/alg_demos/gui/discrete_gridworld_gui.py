@@ -280,7 +280,13 @@ Click button below to place obstacles manually.''')
 
     def change_button_text(self):
 
-        self.ObstaclesButton.configure(text='''Set Random''')
+        if learner_params_.custom_set == True or learner_params_.custom_obstacles is None:
+            self.ObstaclesButton.configure(text='''Set Custom''')
+            learner_params_.custom_set = False
+        else:
+            self.ObstaclesButton.configure(text='''Set Random''')
+            learner_params_.custom_set = True
+
 
 
 class QLearnerParameters:
@@ -305,6 +311,7 @@ class QLearnerParameters:
         self.update_policy = StringVar()
 
         self.custom_obstacles = None # initialising to None in case user input is not obtained (this is the default value in the qlearner code)
+        self.custom_set = False
 
 
     def set_gui_default_params(self):
@@ -327,19 +334,22 @@ class QLearnerParameters:
 
     def collect_obstacle_list_from_user(self):
 
+        if self.custom_set == False:
+            self.grid_gui = GridWorldRenderer(rows = self.row_num.get(), cols = self.col_num.get(), 
+                                              start = (self.start_row.get() - 1, self.start_col.get() - 1),
+                                              goal = (self.goal_row.get()- 1, self.goal_col.get()- 1),
+                                              caption = 'Grid World - Set Obstacles')
 
-        self.grid_gui = GridWorldRenderer(rows = self.row_num.get(), cols = self.col_num.get(), 
-                                          start = (self.start_row.get() - 1, self.start_col.get() - 1),
-                                          goal = (self.goal_row.get()- 1, self.goal_col.get()- 1),
-                                          caption = 'Grid World - Set Obstacles')
+            self.grid_gui.execute_collect_mouse_response()
 
-        self.grid_gui.execute_collect_mouse_response()
+            print "reaching here"
+            obst_records = self.grid_gui.get_mouseclick_record()
+            if obst_records is not None:
 
-        print "reaching here"
-        obst_records = self.grid_gui.get_mouseclick_record()
-        if obst_records is not None:
+                self.custom_obstacles = obst_records
 
-            self.custom_obstacles = obst_records
+        else:
+            self.custom_obstacles = None
 
 
     def buttonSTARTpressed(self):
