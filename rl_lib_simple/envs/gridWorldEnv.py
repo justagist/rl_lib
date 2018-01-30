@@ -19,6 +19,7 @@ START = 2
 TARGET = 3
 CURRENT = 4
 
+# ----- REWARDS AND PUNISHMENTS 
 TRAP_REWARD = -100
 GOAL_REWARD = 100
 SAFE_REWARD = 1
@@ -27,18 +28,22 @@ OUT_OF_BOUNDS_REWARD = -100
 class GridWorldEnv():
 
     ''' LIST OF CLASS VARIABLES: (self.)
-    - state_            (int)           :current state (0 to size(grid world))
-    - grid_             (np.array)      :grid_world with 1 for safe places, 0 for unsafe (traps)
-    - obs_space_    
-    - traps_
-    - starting_state_
-    - target_state_
-    - actions_
-    - episode_done_
-    - status_
-    - reward_
-
-    TODO...
+    - state_            (int)           : current state (0 to size(grid world))
+    - grid_             (np.array)      : grid_world with 1 for safe places, 0 for unsafe (traps), 2 for starting point. 3 is target.
+    - obs_space_        (array (int))   : grid converted to 1D (1 for safe places, 0 for unsafe (traps), 2 for starting point, 3 for target.)
+    - traps_            (array (int))   : indices of traps in obs_space_
+    - safe_states_      (array (int))   : indices of safe regions in obs_space_
+    - starting_state_   (int)           : index of starting state in obs_space_
+    - target_state_     (int)           : index of target in obs_space_
+    - actions_          (array (int))   : different actions represented as integers (0: left, 1: up, 2: right, 3: down)
+    - episode_done_     (bool)          
+    - status_           (string)        : 'safe' - also includes start position
+                                        : 'target'  
+                                        : 'trap'
+                                        : 'out_of_bounds' - current state (obtained by previous action) is out of bounds of the grid world
+    - reward_           (int)
+    - render_           (bool)          : visualise using pygame           
+    - visualizer_       (GridWorldRenderer Instance)
 
     '''
 
@@ -49,7 +54,7 @@ class GridWorldEnv():
             target = (grid_row-1,grid_col-1)
 
         if list_of_hole_pos is None:
-            if grid_row == 4 and grid_col == 4: # Similar to (4x4) FrozenLake Env
+            if grid_row == 4 and grid_col == 4: # Similar to (4x4) FrozenLake Env OpenAI Gym
                 list_of_hole_pos = [(1,1),(1,3),(2,3),(3,0)]
             else:
                 list_of_hole_pos = self._generate_random_traps(grid_row,grid_col,start_pos,target)
@@ -60,19 +65,23 @@ class GridWorldEnv():
         if start_pos in list_of_hole_pos or target in list_of_hole_pos:
             raise Exception("Starting position or target is in a hole!!")
 
-        # self._seed()
         self._configure_environment(grid_row, grid_col, list_of_hole_pos, start_pos, target)
 
         self.prev_state_ = self.state_ = self.starting_state_
 
         self.render_ = render
 
+        # ----- create visualizer for the training process if required
         if self.render_:
             self.visualizer_ = GridWorldRenderer(self.grid_)
 
         self.episode_done_ = False
 
     def _generate_random_traps(self,row,col,strt,tgt,ratio = 0.25):
+        ''' 
+            Generates traps at random locations in the grid (except at TARGET and START).
+            Number of traps is int(0.25 * number of grids in gridworld)
+        '''
 
         trap_rows = np.random.randint(row, size=int(row*col*ratio))
         trap_cols = np.random.randint(col, size=int(row*col*ratio))
@@ -81,6 +90,9 @@ class GridWorldEnv():
 
 
     def _configure_environment(self,row,col,list_of_hole_pos, start_pos, target_pos):
+        '''
+            Creates grid world (and corresponding 1D obs_space_) with the desired number of rows and cols. Sets the starting point and goal.
+        '''
 
         def _setup_grid_world(grid, list_of_coordinates, start, target):
 
@@ -166,7 +178,7 @@ class GridWorldEnv():
                 all) tasks are divided up into well-defined episodes, and done
                 being True indicates the episode has terminated. (For example,
                 perhaps the pole tipped too far, or you lost your last life.)
-            info (dict) :
+            step_details (dict) :
                  diagnostic information useful for debugging.
 
         """
@@ -204,7 +216,9 @@ class GridWorldEnv():
         # return ob, reward, episode_done_, {}
 
     def _render(self, mode = 'human'):
-
+        '''
+            visualize using pygame
+        '''
         self.visualizer_.render(self._convert_state_to_coords(self._get_current_state()))
 
     def _convert_coords_to_state(self, coords): #(row,col)
@@ -275,7 +289,9 @@ class GridWorldEnv():
         self.state_ = self._transition(self.state_, action)
 
     def _transition(self, state, action):
-
+        '''
+            Get new idx of state in the obs_state_ using the given action.            
+        '''
         if action == 0: # go left one step
             if state%self.grid_.shape[1] != 0: # state_ not in the leftmost column of the grid
                 state -= 1

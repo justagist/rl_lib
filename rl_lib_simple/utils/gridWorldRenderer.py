@@ -265,7 +265,10 @@ class GridWorldRenderer:
     def close(self):
         pygame.quit()
 
-
+        
+## ======================== ##
+#         TEST CODE          #
+## ======================== ##
 if __name__ == '__main__':
     env = gridWorldEnv()
 
