@@ -171,7 +171,7 @@ if __name__ == '__main__':
         if len(sys.argv) > 3:
             show = bool(int(sys.argv[3]))
 
-    env = gridWorldEnv(row, col, render = show)
+    env = GridWorldEnv(row, col, render = show)
     learner = QLearnerDiscrete(env)
 
 

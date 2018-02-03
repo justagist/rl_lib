@@ -215,7 +215,6 @@ class GridWorldRenderer:
                 for event in events:
                     if event.type == pygame.QUIT:
                         run = False
-                        pygame.quit()
 
                 self.DISPLAYSURF.fill((0,0,0));
                 for row in range(self.map_height_):
@@ -237,7 +236,7 @@ class GridWorldRenderer:
                 pygame.display.update()
                 clock.tick(5)
 
-        pygame.quit()
+        self.close()
 
 
     def render(self, agent_pos):
@@ -263,6 +262,7 @@ class GridWorldRenderer:
 
 
     def close(self):
+        print "Exiting...\n"
         pygame.quit()
 
         

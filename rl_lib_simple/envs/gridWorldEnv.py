@@ -183,7 +183,7 @@ class GridWorldEnv():
 
         """
 
-        self._sanity_check()
+        # self._sanity_check()
 
         self.episode_done_ = False
         # ------- update self.state_ by taking some action
@@ -271,6 +271,7 @@ class GridWorldEnv():
 
         action = np.random.randint(0,len(self.actions_))
         self._take_action(action)
+        return action
 
     def _sanity_check(self):
 
