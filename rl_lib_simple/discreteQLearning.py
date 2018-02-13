@@ -96,13 +96,13 @@ class QLearnerDiscrete:
 
     def _choose_action(self, actions, **kwargs):
 
-        def epsilon(actions): 
+        def epsilon(): 
             '''
             Given a list of possible actions, a random action is chosen unbiased
             '''
             return np.random.randint(0,len(actions))
 
-        def epsilon_greedy(actions,q_values_of_current_state,decay_factor):
+        def epsilon_greedy():
             '''
             Chooses action with maximum value (greedy). Noise is added to increase initial exploration. 
             decay_factor determines the influence of the noise over time. Choosing 1 would cause costant influence. Choose (1/(i+1)) to reduce the influence with increase in episode number i.
@@ -114,11 +114,11 @@ class QLearnerDiscrete:
 
         if self.action_policy == 'epsilon':
 
-            return epsilon(actions)
+            return epsilon()
 
         elif self.action_policy == 'epsilon_greedy':
 
-            return epsilon_greedy(actions, **kwargs)
+            return epsilon_greedy()
 
         else:
             raise Exception("Unknown Action Policy.")
@@ -132,22 +132,22 @@ class QLearnerDiscrete:
         next_state_qs = Q[s1,:]
         '''
 
-        def update_using_q(curr_state_qs, action, next_state_qs, reward):
+        def update_using_q():
             # self.Q[s,a] = self.Q[s,a] + self.lr*(r + self.y*np.max(self.Q[s1,:]) - self.Q[s,a]) # ----- Q-learning alg
             return curr_state_qs[action] + self.lr*(reward + self.y*np.max(next_state_qs) - curr_state_qs[action])
 
-        def update_using_sarsa(curr_state_qs, action, next_state_qs, reward):
+        def update_using_sarsa():
             # self.Q[s,a] = self.Q[s,a] + self.lr*(r + self.y*self.Q[s1,a] - self.Q[s,a]) # ----- Sarsa
             return curr_state_qs[action] + self.lr*(reward + self.y*next_state_qs[action] - curr_state_qs[action])
 
 
         if self.update_policy == 'q':
 
-            return update_using_q(curr_state_qs, action, next_state_qs, reward)
+            return update_using_q()
 
         elif self.update_policy == 'sarsa':
 
-            return update_using_sarsa(curr_state_qs, action, next_state_qs, reward)
+            return update_using_sarsa()
 
         else: 
             raise Exception("Unkonwn Value Update Policy")
