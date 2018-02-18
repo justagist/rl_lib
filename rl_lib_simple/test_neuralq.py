@@ -8,6 +8,9 @@ from rl_lib_simple.envs.gridWorldEnv import GridWorldEnv
 # env = gym.make('FrozenLake-v0')
 env = GridWorldEnv(4,4, render = False)
 
+# print env.take_random_action()
+# print "here"
+
 tf.reset_default_graph()
 
 #These lines establish the feed-forward part of the network used to choose actions
@@ -46,6 +49,7 @@ with tf.Session() as sess:
 '''
 with tf.Session() as sess:
     sess.run(init)
+    testQ = np.zeros((16,4))
     for i in range(num_episodes):
         #Reset environment and get first new observation
         s = env.reset()
@@ -53,11 +57,17 @@ with tf.Session() as sess:
         d = False
         j = 0
         #The Q-Network
+        print i
         while j < 99:
             j+=1
-            #Choose an action greedily (with e chance of random action) from the Q-network
+            #Choose an action by greedily (with e chance of random action) from the Q-network
             a,allQ = sess.run([predict,Qout],feed_dict={inputs1:np.identity(16)[s:s+1]})
+            testQ[s,:] = allQ
+            # print s,a, testQ
+            # print a, allQ
+            # raw_input()
             if np.random.rand(1) < e:
+                # a[0] = env.action_space.sample()
                 a[0] = env.take_random_action()
             #Get new state and reward from environment
             s1,r,d,_ = env.step(a[0])
@@ -67,10 +77,15 @@ with tf.Session() as sess:
             maxQ1 = np.max(Q1)
             targetQ = allQ
             targetQ[0,a[0]] = r + y*maxQ1
+            # print targetQ
+            # raw_input()
             #Train our network using target and predicted Q values
             _,W1 = sess.run([updateModel,W],feed_dict={inputs1:np.identity(16)[s:s+1],nextQ:targetQ})
+            # print nextQ
+            # raw_input()
             rAll += r
-            s = s1
+            # s = s1
+            s = env._get_current_state()
             if d == True:
                 #Reduce chance of random action as we train the model.
                 e = 1./((i/50) + 10)
@@ -78,9 +93,30 @@ with tf.Session() as sess:
         jList.append(j)
         rList.append(rAll)
 
-# print Qout
-# print allQ
+print testQ
+
 print "Percent of succesful episodes: " + str(sum(rList)/num_episodes) + "%"
+
+''' Neural trained Q-table preodictions
+
+[[-2.63129878e+00 -1.90356026e+01  9.99981918e+01  9.76629868e+01]
+ [-1.42750359e+00 -2.61309814e+00  9.99998474e+01  9.65411224e+01]
+ [ 9.67097015e+01 -1.09881365e+00 -1.29615879e+00  1.00000076e+02]
+ [ 9.55762711e+01  1.45523669e-03 -1.99928322e+01 -1.99945812e+01]
+ [-1.32573948e+01 -5.70025826e+00  3.79073563e+01  9.26990509e+01]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 9.68824615e+01 -1.00023174e+00 -1.00007367e+00  1.00000092e+02]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [-1.39035673e+01  8.32314453e+01  8.55116959e+01 -1.91983395e+01]
+ [-5.89186287e+00  4.16112289e+01 -9.24920883e+01  8.90207138e+01]
+ [ 9.12338181e+01  1.00000076e+02 -1.00041938e+00 -1.00037813e+00]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [-5.18447208e+00 -7.90251999e+01  1.00000198e+02 -3.49898767e+00]
+ [-9.64274216e+01  1.00000092e+02 -1.16409516e+00 -1.37733853e+00]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]]
+
+'''
 
 
 
