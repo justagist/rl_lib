@@ -12,12 +12,12 @@ def read(fname):
 
 setup(
     name = "rl_lib_simple",
-    version = "1.1",
+    version = "1.3",
     author = "JustaGist",
     author_email = "saifksidhik@gmail.com",
-    description = ("library containing the gridworld environment and its visualizer for testing discrete reinforcement learning algorithms"),
+    description = ("library containing: 1. the gridworld environment and its visualizer for testing discrete reinforcement learning algorithms; 2. the contextual bandits environment and fully connected neural network for solving the problem."),
     license = "BSD",
-    keywords = "reinforcement learning, q learning, sarsa, grid world",
+    keywords = "reinforcement learning, q learning, sarsa, grid world, fully connected network, neural network, bandits, contextual bandits",
     url = "https://bitbucket.org/justagist/reinfor_learn",
     # packages=['rl_lib','envs','utils','alg_demos'],
     # packages=['rl_lib/envs', 'rl_lib/utils', 'rl_lib/alg_demos'],

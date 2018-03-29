@@ -6,8 +6,8 @@ Simple implementation for solving the gridworld environment using Q-learning/Sar
 
 
     @author: JustaGist (saifksidhik@gmail.com)
-    @file: discreteQLearning 
-    @package: rl_lib_simple v1.2
+    @file: discreteQLearning.py
+    @package: rl_lib_simple v1.3
 
 USAGE: python discreteQLearning.py <row> <col> <visualize?>
         (or) 

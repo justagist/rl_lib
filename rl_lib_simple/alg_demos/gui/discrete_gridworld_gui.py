@@ -6,7 +6,7 @@ Interactive implementation of solving the gridworld environment using Q-learning
 
     @author: JustaGist (saifksidhik@gmail.com)
     @file: discrete_gridworld_gui.py
-    @package: rl_lib_simple v1.2
+    @package: rl_lib_simple v1.3
 
 USAGE: If rl_lib_simple package installed, run 'qlearn-gridworld-gui' from command line.
 

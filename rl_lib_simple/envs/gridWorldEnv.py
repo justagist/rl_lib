@@ -5,7 +5,7 @@ GridWorld Environment Class for testing reinforcement learning algorihtms
 
     @author: JustaGist (saifksidhik@gmail.com)
     @file: gridWorldEnv.py
-    @package: rl_lib_simple v1.2
+    @package: rl_lib_simple v1.3
 
 '''
 

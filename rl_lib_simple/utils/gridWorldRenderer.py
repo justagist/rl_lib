@@ -6,7 +6,7 @@ Pygame render class for visualising GridWorld Environment (gridWorldEnv.py)
 
     @author: JustaGist (saifksidhik@gmail.com)
     @file: gridWorldRenderer.py
-    @package: rl_lib_simple v1.2
+    @package: rl_lib_simple v1.3
 
 '''
 
