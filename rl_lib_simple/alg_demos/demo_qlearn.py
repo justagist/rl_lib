@@ -16,7 +16,7 @@ USAGE: python demo_qlearn.py
 import sys
 import numpy as np
 from rl_lib_simple.envs.gridWorldEnv import GridWorldEnv
-from rl_lib_simple.discreteQLearning import QLearnerDiscrete
+from rl_lib_simple.learners.discreteQLearning import QLearnerDiscrete
 
 
 def obtain_traps():

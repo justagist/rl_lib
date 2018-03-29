@@ -10,7 +10,7 @@ USAGE: python contextual_bandit_solver.py
 
 '''
 from rl_lib_simple.envs.contextualBanditEnv import ContextualBandit
-from rl_lib_simple.fcNetLearner import FCNetLearner
+from rl_lib_simple.learners.fcNetLearner import FCNetLearner
 import numpy as np
 
 if __name__ == '__main__':
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     learner = FCNetLearner(env, lr = 0.001, eps = 10000, rand_action_chance = 0.1) 
 
     # ----- Learning step
-    action_probs = learner.find_best_actions(verbose=False)
+    action_probs = learner.find_best_actions(verbose = True)
 
     for bandit in range(learner.num_states):
         print "The agent thinks action " + str(np.argmax(action_probs[bandit])+1) + " for bandit " + str(bandit+1) + " is the most promising...."
