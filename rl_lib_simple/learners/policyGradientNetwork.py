@@ -1,6 +1,6 @@
 ''' 
 
-A Fully Connected Neural Network (2-layer) for learning simple state to action mapping by learning from rewards obtained due to an action taken at a state.  
+A Policy Gradient using Fully Connected Neural Network (2-layer) for learning simple state to action mapping by learning from rewards obtained due to an action taken at a state.  
 
 
     @author: JustaGist (saifksidhik@gmail.com)
@@ -17,7 +17,7 @@ import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
 
-class FCNetLearner():
+class PolicyGradientNetwork():
 
     def __init__(self, env, lr = 0.001, eps = 10000, rand_action_chance = 0.1):
         

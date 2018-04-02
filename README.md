@@ -12,7 +12,7 @@ A repo for learning and testing RL algorithms.
 ### Version 1.3
 
 * Contextual bandits environment added to environments.
-* Fully Connected Neural Network Learner added to solve the problem of contextual bandits (demo included).
+* Policy Gradient using a fully connected neural network learner added to solve the problem of contextual bandits (demo included).
 * Bug Fixes
 
 ### Version 1.2 

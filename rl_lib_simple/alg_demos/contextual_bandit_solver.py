@@ -1,6 +1,6 @@
 ''' 
 
-Testing the library. Solve contextual bandit environment using fully connected neural network.
+Testing the library. Solve contextual bandit environment using fully connected neural network performing policy gradients.
 
     @author: JustaGist (saifksidhik@gmail.com)
     @file: contextual_bandit_solver.py
@@ -10,7 +10,7 @@ USAGE: python contextual_bandit_solver.py
 
 '''
 from rl_lib_simple.envs.contextualBanditEnv import ContextualBandit
-from rl_lib_simple.learners.fcNetLearner import FCNetLearner
+from rl_lib_simple.learners.policyGradientNetwork import PolicyGradientNetwork
 import numpy as np
 
 if __name__ == '__main__':
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     env = ContextualBandit([[-5,1,0.1,2],[1,-5,3,5],[1,3,-5,4],[0.1,0.1,0.3,-4]]) 
 
     # ----- Load the agent
-    learner = FCNetLearner(env, lr = 0.001, eps = 10000, rand_action_chance = 0.1) 
+    learner = PolicyGradientNetwork(env, lr = 0.001, eps = 10000, rand_action_chance = 0.1) 
 
     # ----- Learning step
     action_probs = learner.find_best_actions(verbose = True)

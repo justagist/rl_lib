@@ -1,6 +1,6 @@
 ''' 
 
-A contextual bandits class for testing a fully connected neural network in predicting the most rewarding arm for a bandit.
+A contextual bandits class for testing a policy gradient network in predicting the most rewarding arm for a bandit.
 
 
     @author: JustaGist (saifksidhik@gmail.com)
