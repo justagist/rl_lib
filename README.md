@@ -42,6 +42,10 @@ A repo for learning and testing RL algorithms.
 * Environments library created containing grid world environment.
 * Greedy and Epsilon-greedy action policies implemented.
 
+## Dependencies:
+
+* pygame
+* python-tk
 
 ## Installation: 
 
